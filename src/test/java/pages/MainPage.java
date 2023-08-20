@@ -1,18 +1,25 @@
 package pages;
-
-import io.appium.java_client.AppiumDriver;
-import org.openqa.selenium.By;
+import org.openqa.selenium.remote.RemoteWebDriver;
 import wikiUiTest.Helper;
+import wikiUiTest.Platform;
 
-public class MainPage extends Helper {
+abstract public class MainPage extends Helper {
 
 
-    public MainPage(AppiumDriver driver) {
+    public MainPage(RemoteWebDriver driver) {
         super(driver);
     }
 
-    private String searchBox = "org.wikipedia:id/search_container";
-    private String buttonSavedList = "org.wikipedia:id/nav_tab_reading_lists";
+
+   protected static String
+      searchBox,
+      buttonSavedList,
+      buttonMenu,
+    buttonWatchList;
+
+
+
+
 
 
 
@@ -20,12 +27,25 @@ public class MainPage extends Helper {
 
 
     public void clickSearchBox(){
-        super.elementClick(By.id(searchBox),"element searchBox not found");
+        super.elementClick((searchBox),"element searchBox not found");
     }
-
 
     public void clickTapBarButtonSaved(){
-        super.elementClick(By.id(buttonSavedList),"element buttonSavedList not found");
+        super.elementClick((buttonSavedList),"element buttonSavedList not found");
 
     }
+    public void clickMenuButton(){
+        if (Platform.getInstance().isMw()){
+            super.elementClick(buttonMenu,"element buttonMenu not found");
+        }
+        else System.out.println("Method clickMenuButton do nothing for platform " + Platform.getInstance().getPlatformVar());
+    }
+    public void clickMenuButtonWatchList(){
+        if (Platform.getInstance().isMw()){
+            super.elementClick(buttonWatchList,"element buttonMenu not found");
+        }
+        else System.out.println("Method clickMenuButtonWatchList do nothing for platform " + Platform.getInstance().getPlatformVar());
+
+    }
+
 }

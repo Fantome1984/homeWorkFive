@@ -1,36 +1,44 @@
 package wikiUiTest;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import pages.ArticlePage;
 import pages.MainPage;
 import pages.SearchPage;
 import pages.StartPage;
+import pages.factories.ArticlePageFactories;
+import pages.factories.MainPageFactories;
+import pages.factories.SearchPageFactories;
+import pages.factories.StartPageFactories;
 
-public class SearchTest extends TestBase{
+public class SearchTest extends TestBase {
+
+
+    StartPage startPage = StartPageFactories.get(driver);
+
 
 
     @Test
     public void testAssertTitile(){
-        StartPage startPage =  new StartPage(driver);
-        MainPage mainPage = new MainPage(driver);
-        SearchPage searchPage = new SearchPage(driver);
-        ArticlePage articlePage = new ArticlePage(driver);
-
-        startPage.ckickButtonSkip();
+        StartPage startPage = StartPageFactories.get(driver);
+        MainPage mainPage = MainPageFactories.get(driver);
+        SearchPage searchPage = SearchPageFactories.get(driver);
+        ArticlePage articlePage = ArticlePageFactories.get(driver);
+        if (Platform.getInstance().isAndroid()){startPage.ckickButtonSkip();}
         mainPage.clickSearchBox();
         searchPage.enteringASearchValue("java");
-        searchPage.сlickOnArticle("Java (programming language)");
+        searchPage.сlickOnArticle("bject-oriented programming language");
         articlePage.checkTitile();
     }
 
 
     @Test
     public void testCancelSearch(){
-        StartPage startPage =  new StartPage(driver);
-        MainPage mainPage = new MainPage(driver);
-        SearchPage searchPage = new SearchPage(driver);
+        StartPage startPage = StartPageFactories.get(driver);
+        MainPage mainPage = MainPageFactories.get(driver);
+        SearchPage searchPage  = SearchPageFactories.get(driver);
 
-        startPage.ckickButtonSkip();
+        if (Platform.getInstance().isAndroid()){startPage.ckickButtonSkip();}
         mainPage.clickSearchBox();
         searchPage.enteringASearchValue("java");
         searchPage.сheckSearchResult();
@@ -40,9 +48,9 @@ public class SearchTest extends TestBase{
 
     @Test
     public void testChekTitileAndDescription(){
-        StartPage startPage =  new StartPage(driver);
-        MainPage mainPage = new MainPage(driver);
-        SearchPage searchPage = new SearchPage(driver);
+        StartPage startPage = StartPageFactories.get(driver);
+        MainPage mainPage = MainPageFactories.get(driver);
+        SearchPage searchPage =  SearchPageFactories.get(driver);
         startPage.ckickButtonSkip();
         mainPage.clickSearchBox();
         searchPage.enteringASearchValue("java");

@@ -7,58 +7,68 @@ import io.appium.java_client.touch.offset.PointOption;
 import org.junit.jupiter.api.Assertions;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.time.Duration;
 import java.util.List;
+import java.util.regex.Pattern;
 
 public class Helper{
 
-    private AppiumDriver driver;
+    protected RemoteWebDriver driver;
 
-    public Helper(AppiumDriver driver){this.driver = driver;}
+    public Helper(RemoteWebDriver driver){this.driver = driver;}
 
 
-    public WebElement elementVisibility(By locator, String error_messege){
+    public WebElement elementVisibility(String locator, String error_messege){
+        By by = this.getLocatorByString(locator);
         WebDriverWait wait = new WebDriverWait(driver, 15);
-        return wait.until(ExpectedConditions.visibilityOfElementLocated(locator));
+        return wait.until(ExpectedConditions.visibilityOfElementLocated(by));
     }
 
-    public WebElement elementClick(By locator, String error_messege){
+    public WebElement elementClick(String locator, String error_messege){
         WebElement element = elementVisibility(locator,error_messege);
         element.click();
         return element;
     }
 
-    public WebElement assertElementHasText(By locator, String expected, String error){
+    public WebElement assertElementHasText(String locator, String expected, String error){
         WebElement element = elementVisibility(locator,error);
         String actual = element.getAttribute("text");
         Assertions.assertEquals(expected,actual,error);
         return element;
     }
 
-    public WebElement enteringAValue(By locator, String text,String error_messege){
+    public WebElement enteringAValue(String locator, String text,String error_messege){
         WebElement element = elementVisibility(locator,error_messege);
         element.sendKeys(text);
         return element;
     }
 
 
-    public boolean waitForElementNotPresent(By locator){
+    public boolean waitForElementNotPresent(String locator){
+        By by = this.getLocatorByString(locator);
         WebDriverWait wait = new WebDriverWait(driver,15);
-        return wait.until(ExpectedConditions.invisibilityOfElementLocated(locator));
+        return wait.until(ExpectedConditions.invisibilityOfElementLocated(by));
     }
 
     public void swipeUp(){
-        TouchAction action = new TouchAction(driver);
-        Dimension size = driver.manage().window().getSize();
-        int x = size.width/2;
-        int start_y = (int)(size.height*0.8);
-        int end_y = (int)(size.height*0.2);
-        action.press(PointOption.point(x,start_y)).waitAction(WaitOptions.waitOptions(Duration.ofMillis(200))).
-                moveTo(PointOption.point(x,end_y)).release().perform();
+
+        if (driver instanceof AppiumDriver){
+            TouchAction action = new TouchAction((AppiumDriver)driver);
+            Dimension size = driver.manage().window().getSize();
+            int x = size.width/2;
+            int start_y = (int)(size.height*0.8);
+            int end_y = (int)(size.height*0.2);
+            action.press(PointOption.point(x,start_y)).waitAction(WaitOptions.waitOptions(Duration.ofMillis(200))).
+                    moveTo(PointOption.point(x,end_y)).release().perform();}
+        else {
+            System.out.println("Method swipeUp() do nothing for platform " + Platform.getInstance().getPlatformVar());
+        }
     }
 
     public void quickSwipeUp(){
@@ -66,12 +76,12 @@ public class Helper{
 
     }
 
-    public void swipeUpToElement(By by,String error_messege,int max_swipes){
-
+    public void swipeUpToElement(String locator,String error_messege,int max_swipes){
+        By by = this.getLocatorByString(locator);
         int alredy_swipe = 0;
         while (driver.findElements(by).size()==0){
             if(alredy_swipe>max_swipes){
-                waitForElementNotPresent(by);
+                waitForElementNotPresent(locator);
                 return;
             }
             quickSwipeUp();
@@ -80,40 +90,81 @@ public class Helper{
 
     }
 
-    public void swipeElementToLeft(By by, String error_messege){
+    public void swipeElementToLeft(String locator, String error_messege){
 
-        WebElement element = elementVisibility(by,error_messege);
-        int left_x = element.getLocation().getX();
-        int rigth_x = left_x + element.getSize().getWidth();
-        int upper_y = element.getLocation().getY();
-        int lower_y = upper_y+element.getSize().getHeight();
-        int middle_y =(upper_y+lower_y)/2;
-        TouchAction action = new TouchAction(driver);
-        action.press(PointOption.point(rigth_x,middle_y)).
-                waitAction(WaitOptions.waitOptions(Duration.ofMillis(150)))
-                .moveTo(PointOption.point(left_x,middle_y)).release()
-                .perform();
+        if (driver instanceof AppiumDriver||Platform.getInstance().isAndroid()){
+            WebElement element = elementVisibility(locator,error_messege);
+            int left_x = element.getLocation().getX();
+            int rigth_x = left_x + element.getSize().getWidth();
+            int upper_y = element.getLocation().getY();
+            int lower_y = upper_y+element.getSize().getHeight();
+            int middle_y =(upper_y+lower_y)/2;
+            TouchAction action = new TouchAction((AppiumDriver)driver);
+            action.press(PointOption.point(rigth_x,middle_y)).
+                    waitAction(WaitOptions.waitOptions(Duration.ofMillis(150)))
+                    .moveTo(PointOption.point(left_x,middle_y)).release()
+                    .perform();
+        }
+        else if (Platform.getInstance().isMw()){
+            elementClick(locator,error_messege);
+        }
+        else System.out.println("Method swipeElementToLeft() do nothing for platform " + Platform.getInstance().getPlatformVar());
+
     }
 
-    public int chekAmmountElement(By by){
+    public int chekAmmountElement(String locator){
+        By by = this.getLocatorByString(locator);
         List elements = driver.findElements(by);
         return elements.size();
     }
 
-    public void assertElementNotPresent(By by,String error_messege){
-        int ammount_of_elements = chekAmmountElement(by);
+    public void assertElementNotPresent(String locator,String error_messege){
+        int ammount_of_elements = chekAmmountElement(locator);
         if (ammount_of_elements >0){
-            String defaultErrorMessege ="An Element "  +by.toString()+" supposted be not present ";
+            String defaultErrorMessege ="An Element "  +locator+" supposted be not present ";
             throw new AssertionError(defaultErrorMessege + " " + error_messege);
         }
 
     }
 
-    public void assertElementPresent(By by, String error_messege){
-        int ammount_of_elements = chekAmmountElement(by);
+    public void assertElementPresent(String locator, String error_messege){
+        int ammount_of_elements = chekAmmountElement(locator);
         Assertions.assertTrue(ammount_of_elements>0,error_messege);
+    }
+
+    private By getLocatorByString(String locator_with_type){
+        String[] exploded_locator = locator_with_type.split(Pattern.quote(":"),2);
+        String by_type = exploded_locator[0];
+        String locator = exploded_locator[1];
+
+        if (by_type.equals("xpath")){
+            return By.xpath(locator);
+        }
+        else if (by_type.equals("id")){
+            return By.id(locator);
+        }
+        else if (by_type.equals("css")){
+            return By.cssSelector(locator);
+        }
+        else {
+            throw new IllegalArgumentException("Cannot get tupe of locator. Locator " + locator_with_type);
+        }
+
 
     }
+    public void scrollWebPageUp(){
+        if(Platform.getInstance().isMw()){
+            JavascriptExecutor JsExecutor=(JavascriptExecutor) driver;
+            JsExecutor.executeScript("window.scrollBY(0,250)");
+        }
+        else System.out.println("Method scrollWebPageUp do nothing for platform " + Platform.getInstance().getPlatformVar());
+    }
+
+    public boolean isElementPresent(String locator){
+        return chekAmmountElement(locator)>0;
+
+    }
+
 
 
 }

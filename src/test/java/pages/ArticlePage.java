@@ -2,31 +2,38 @@ package pages;
 
 import io.appium.java_client.AppiumDriver;
 import org.openqa.selenium.By;
+import org.openqa.selenium.remote.RemoteWebDriver;
 import wikiUiTest.Helper;
+import wikiUiTest.Platform;
 
-public class ArticlePage extends Helper {
+abstract public class ArticlePage extends Helper {
 
-    public ArticlePage(AppiumDriver driver) {
+    public ArticlePage(RemoteWebDriver driver) {
         super(driver);
     }
-
-    private String testTitile = "//android.view.View[@bounds='[42,821][913,994]']";
-    private String buttonSave = "org.wikipedia:id/page_save";
-    private static String save_Menu_tpl ="//android.widget.TextView[@text='{SUBSTRING}']";
-    private String createNewReadingList = "//android.widget.TextView[@text='Create new']";
-    private String fieldNameNewReadingList = "org.wikipedia:id/text_input";
-    private String buttonOk="android:id/button1";
-    private String сreatedReadingList ="//android.widget.TextView[@text='Saved articles']";
-    private String backButton = "//android.widget.ImageButton[@content-desc='Navigate up']";
+protected static String
+     testTitile,
+     buttonSave,
+        save_Menu_tpl,
+     createNewReadingList,
+     fieldNameNewReadingList,
+     buttonOk,
+        сreatedReadingList,
+      backButton,
+    OPTION_REMOVE_MY_LIST_BUTTON;
 
 
     public void checkTitile(){
-        super.assertElementPresent(By.xpath(testTitile),"Заголовок не найден");
+        super.assertElementPresent(testTitile,"Заголовок не найден");
 
     }
 
     public void clickButtonSave(){
-        super.elementClick(By.id(buttonSave),"element buttonSave not found");
+        if (Platform.getInstance().isMw()){
+            this.removeArticalFromSaveIfAdded();
+        }
+
+        super.elementClick((buttonSave),"element buttonSave not found");
     }
 
 
@@ -37,21 +44,31 @@ public class ArticlePage extends Helper {
 
     public void сlickMenuSaveArticle(String substring){
         String search_result_xpath = getMenuSaveElement(substring);
-        super.elementClick(By.xpath(search_result_xpath),"element search_result_xpath not found");
+        super.elementClick(search_result_xpath,"element search_result_xpath not found");
     }
 
     public void createNewReadingList(String nameReadingList){
-        super.elementClick(By.xpath(createNewReadingList),"element createNewReadingList not found");
-        super.enteringAValue(By.id(fieldNameNewReadingList),nameReadingList,"element fieldNameNewReadingList not found");
-        super.elementClick(By.id(buttonOk),"element buttonOk not found");
+        super.elementClick((createNewReadingList),"element createNewReadingList not found");
+        super.enteringAValue((fieldNameNewReadingList),nameReadingList,"element fieldNameNewReadingList not found");
+        super.elementClick((buttonOk),"element buttonOk not found");
     }
 
     public void clickButtonBack(){
-        super.elementClick(By.xpath(backButton),"element backButton not found");
+        if (Platform.getInstance().isAndroid()){
+            super.elementClick((backButton),"element backButton not found");
+        }
+         else System.out.println("Method clickButtonBack do nothing for platform " + Platform.getInstance().getPlatformVar());
     }
 
     public void clickReadingList(){
-        super.elementClick(By.xpath(сreatedReadingList),"element сreatedReadingList not found");
+        super.elementClick((сreatedReadingList),"element сreatedReadingList not found");
+    }
+
+    public void removeArticalFromSaveIfAdded(){
+        if (this.isElementPresent(OPTION_REMOVE_MY_LIST_BUTTON)){
+            this.elementClick(OPTION_REMOVE_MY_LIST_BUTTON,"element OPTION_REMOVE_MY_LIST_BUTTON not found");
+        }
+        this.elementVisibility(buttonSave,"element buttonSave not found");
     }
 
 

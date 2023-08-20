@@ -7,8 +7,6 @@
     <groupId>org.example</groupId>
     <artifactId>homeWorkFive</artifactId>
     <version>1.0-SNAPSHOT</version>
-
-
     <dependencies>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
