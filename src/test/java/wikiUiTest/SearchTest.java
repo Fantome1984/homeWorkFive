@@ -1,7 +1,8 @@
 package wikiUiTest;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import io.qameta.allure.*;
+import io.qameta.allure.junit4.DisplayName;
+import org.junit.Test;;
 import pages.ArticlePage;
 import pages.MainPage;
 import pages.SearchPage;
@@ -10,15 +11,17 @@ import pages.factories.ArticlePageFactories;
 import pages.factories.MainPageFactories;
 import pages.factories.SearchPageFactories;
 import pages.factories.StartPageFactories;
+@Epic("Тесты на поиск статей")
 
 public class SearchTest extends TestBase {
 
 
-    StartPage startPage = StartPageFactories.get(driver);
-
-
 
     @Test
+    @Severity(SeverityLevel.BLOCKER)
+    @DisplayName("Проверка заголовка")
+    @Description("Кликаем на кнопку поиска, вводим поисковое значение, проверяем заголовок")
+    @Step("Старт теста testAssertTitile")
     public void testAssertTitile(){
         StartPage startPage = StartPageFactories.get(driver);
         MainPage mainPage = MainPageFactories.get(driver);
@@ -33,11 +36,14 @@ public class SearchTest extends TestBase {
 
 
     @Test
+    @Severity(SeverityLevel.CRITICAL)
+    @DisplayName("Отмена поиска")
+    @Description("Кликаем на кнопку поиска, вводим поисковое значение,отменяем поиск,проверяем отсутствие кнопки отмены поиска")
+    @Step("Старт теста testCancelSearch")
     public void testCancelSearch(){
         StartPage startPage = StartPageFactories.get(driver);
         MainPage mainPage = MainPageFactories.get(driver);
         SearchPage searchPage  = SearchPageFactories.get(driver);
-
         if (Platform.getInstance().isAndroid()){startPage.ckickButtonSkip();}
         mainPage.clickSearchBox();
         searchPage.enteringASearchValue("java");
@@ -47,6 +53,10 @@ public class SearchTest extends TestBase {
     }
 
     @Test
+    @Severity(SeverityLevel.NORMAL)
+    @DisplayName("Проверка заголовка и описания")
+    @Description("Кликаем на кнопку поиска, вводим поисковое значение,проверяем заголовок и описание")
+    @Step("Старт теста testChekTitileAndDescription")
     public void testChekTitileAndDescription(){
         StartPage startPage = StartPageFactories.get(driver);
         MainPage mainPage = MainPageFactories.get(driver);

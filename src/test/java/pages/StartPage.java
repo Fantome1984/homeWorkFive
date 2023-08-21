@@ -1,6 +1,7 @@
 package pages;
 
 import io.appium.java_client.AppiumDriver;
+import io.qameta.allure.Step;
 import org.openqa.selenium.By;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import wikiUiTest.Helper;
@@ -15,7 +16,8 @@ import wikiUiTest.Helper;
 
 
 
-        public void ckickButtonSkip(){
+        @Step("Нажимаем кнопку пропустить на стартовом экране")
+    public void ckickButtonSkip(){
             this.elementClick((buttonSkip),"Не найдена кнопка пропуска");
         }
 

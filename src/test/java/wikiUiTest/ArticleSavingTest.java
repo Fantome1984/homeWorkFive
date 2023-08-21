@@ -1,9 +1,11 @@
 package wikiUiTest;
 
-import org.junit.jupiter.api.Test;
-import org.openqa.selenium.By;
+import io.qameta.allure.*;
+import io.qameta.allure.junit4.DisplayName;
+import org.junit.Test;
 import pages.*;
 import pages.factories.*;
+@Epic("Тесты на сохранение статей")
 
 public class ArticleSavingTest extends TestBase {
 
@@ -12,6 +14,13 @@ public class ArticleSavingTest extends TestBase {
     private String password = "57570000Vks";
 
     @Test
+    @Severity(SeverityLevel.BLOCKER)
+    @Features(value = {@Feature("Поиск"),@Feature("Сохранение статьи"),@Feature("Удаление статьи")})
+    @DisplayName("Сохранение и удаление статьи из избранного")
+    @Description("Кликаем на кнопку поиска, вводим поисковое значение,переходим в статью, " +
+            "добавлем ее в избранное, переходим во вторую статью, так же добавлем ее в избранное, " +
+            "переходим в избранное, удаляем сатьтю, проеряем удаление статьи и сохрание оставшейся статьи ")
+    @Step("Старт теста testAssertTitile")
     public void testSavingArticles() throws InterruptedException {
         StartPage startPage = StartPageFactories.get(driver);
         MainPage mainPage = MainPageFactories.get(driver);

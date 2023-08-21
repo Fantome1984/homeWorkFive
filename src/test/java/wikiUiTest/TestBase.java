@@ -1,26 +1,33 @@
 package wikiUiTest;
 
 import io.appium.java_client.AppiumDriver;
+import io.qameta.allure.Step;
 import junit.framework.TestCase;
+import org.junit.After;
+import org.junit.Before;
 import org.openqa.selenium.remote.RemoteWebDriver;
 
-public class TestBase extends TestCase {
+import java.io.FileOutputStream;
+import java.util.Properties;
+
+public class TestBase  {
 
     protected RemoteWebDriver driver;
 
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
+    @Before
+    @Step("Запуск драйвера и сесии")
+    public void setUp() throws Exception {
         driver = Platform.getInstance().getDriver();
         if (Platform.getInstance().isMw()) {
             this.openWikiWebPageForMobileWeb();
         }
+
     }
 
-    @Override
-    protected void tearDown() throws Exception {
+    @After
+    @Step("Закрытие драйвера и сесии")
+    public void tearDown() {
         driver.quit();
-        super.tearDown();
     }
 
     protected void openWikiWebPageForMobileWeb(){
@@ -31,6 +38,9 @@ public class TestBase extends TestCase {
             System.out.println("Method openWikiWebPageForMobileWeb() do nothing for platform " + Platform.getInstance().getPlatformVar());
         }
     }
+
+
+
 
 
 }

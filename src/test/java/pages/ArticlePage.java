@@ -1,6 +1,7 @@
 package pages;
 
 import io.appium.java_client.AppiumDriver;
+import io.qameta.allure.Step;
 import org.openqa.selenium.By;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import wikiUiTest.Helper;
@@ -22,12 +23,13 @@ protected static String
       backButton,
     OPTION_REMOVE_MY_LIST_BUTTON;
 
-
+    @Step("Проверяем наличие заголовка")
     public void checkTitile(){
+        screenshot(this.takeScrrenshot("articale.titile"));
         super.assertElementPresent(testTitile,"Заголовок не найден");
 
     }
-
+    @Step("Кликаем на кнопку сохранения статьи")
     public void clickButtonSave(){
         if (Platform.getInstance().isMw()){
             this.removeArticalFromSaveIfAdded();
@@ -41,18 +43,17 @@ protected static String
         return save_Menu_tpl.replace("{SUBSTRING}",substring);
     }
 
-
     public void сlickMenuSaveArticle(String substring){
         String search_result_xpath = getMenuSaveElement(substring);
         super.elementClick(search_result_xpath,"element search_result_xpath not found");
     }
-
+    @Step("Создаем новую страницу с сохранением статей")
     public void createNewReadingList(String nameReadingList){
         super.elementClick((createNewReadingList),"element createNewReadingList not found");
         super.enteringAValue((fieldNameNewReadingList),nameReadingList,"element fieldNameNewReadingList not found");
         super.elementClick((buttonOk),"element buttonOk not found");
     }
-
+    @Step("Кликаем на кнопку назад")
     public void clickButtonBack(){
         if (Platform.getInstance().isAndroid()){
             super.elementClick((backButton),"element backButton not found");
